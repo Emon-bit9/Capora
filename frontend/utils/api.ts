@@ -1,5 +1,15 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+// Debug logging for development
+if (typeof window !== 'undefined') {
+  console.log('🔗 API Configuration:', {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    API_BASE_URL,
+    environment: process.env.NODE_ENV,
+    hostname: window.location.hostname
+  });
+}
+
 export const apiEndpoints = {
   auth: {
     register: `${API_BASE_URL}/api/v1/auth/register`,
@@ -36,6 +46,14 @@ export const apiEndpoints = {
 export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token');
   
+  // Debug logging
+  console.log('🚀 Making API request:', {
+    url,
+    method: options.method || 'GET',
+    hasToken: !!token,
+    timestamp: new Date().toISOString()
+  });
+  
   // Check if body is FormData - if so, don't set Content-Type to let browser set it with boundary
   const isFormData = options.body instanceof FormData;
   
@@ -56,5 +74,26 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
     ...options,
   };
 
-  return fetch(url, defaultOptions);
+  try {
+    const response = await fetch(url, defaultOptions);
+    
+    // Debug logging for response
+    console.log('📥 API response:', {
+      url,
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      timestamp: new Date().toISOString()
+    });
+    
+    return response;
+  } catch (error) {
+    // Enhanced error logging
+    console.error('❌ API request failed:', {
+      url,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+    throw error;
+  }
 }; 
