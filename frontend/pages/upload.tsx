@@ -106,7 +106,7 @@ const UploadWorkflow = () => {
       formData.append('title', title || 'Untitled Video');
       formData.append('platforms', JSON.stringify(selectedPlatforms));
 
-      const response = await fetchWithAuth('http://localhost:8080/api/v1/videos/upload', {
+      const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/videos/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -135,7 +135,7 @@ const UploadWorkflow = () => {
     
     const checkStatus = async () => {
       try {
-        const response = await fetchWithAuth(`http://localhost:8080/api/v1/videos/status/${contentId}`);
+        const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/videos/status/${contentId}`);
         if (response.ok) {
           const status: ProcessingStatus = await response.json();
           setProcessingStatus(status);
@@ -170,7 +170,7 @@ const UploadWorkflow = () => {
 
   const fetchProcessedVariants = async (contentId: string) => {
     try {
-      const response = await fetchWithAuth(`http://localhost:8080/api/v1/videos/variants/${contentId}`);
+      const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/videos/variants/${contentId}`);
       if (response.ok) {
         const data = await response.json();
         setProcessedContent(data);
@@ -185,7 +185,7 @@ const UploadWorkflow = () => {
     if (!processedContent) return;
 
     try {
-      const response = await fetchWithAuth(`http://localhost:8080/api/v1/publishing/publish/${processedContent.content_id}`, {
+      const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/publishing/publish/${processedContent.content_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -213,7 +213,7 @@ const UploadWorkflow = () => {
 
     try {
       const platforms = processedContent.variants.map(v => v.platform);
-      const response = await fetchWithAuth(`http://localhost:8080/api/v1/publishing/publish/${processedContent.content_id}`, {
+      const response = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/publishing/publish/${processedContent.content_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -554,62 +554,44 @@ const UploadWorkflow = () => {
   );
 
   const renderReviewStep = () => (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Review Your Videos
+          Review Your Content
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 text-lg mb-2">
-          Your videos have been optimized for each platform with proper aspect ratios and formats.
-        </p>
-        <p className="text-gray-500 dark:text-gray-500 text-sm">
-          🎬 Preview each video to ensure quality • 📐 Check aspect ratios match platform requirements • 🚀 Publish individually or all at once
+        <p className="text-gray-600 dark:text-gray-400">
+          Your videos have been processed and optimized for each platform
         </p>
       </div>
 
       {processedContent && (
-        <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              {processedContent.title}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Status: <span className="capitalize font-medium">{processedContent.content_status}</span>
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {processedContent.variants.map((variant) => {
               // Calculate aspect ratio for proper display
               const getAspectRatioClass = (platform: string) => {
-                switch (platform) {
+                switch (platform.toLowerCase()) {
                   case 'tiktok':
                   case 'instagram':
                   case 'youtube_shorts':
-                    return 'aspect-[9/16]'; // Vertical video
+                    return 'aspect-[9/16]'; // 9:16 for vertical
                   case 'facebook':
-                    return 'aspect-square'; // Square video
                   case 'twitter':
-                    return 'aspect-video'; // 16:9 landscape
+                  case 'youtube':
+                    return 'aspect-video'; // 16:9 for horizontal
                   default:
                     return 'aspect-video';
                 }
               };
 
               const getPlatformIcon = (platform: string) => {
-                switch (platform) {
-                  case 'tiktok':
-                    return '🎵';
-                  case 'instagram':
-                    return '📸';
-                  case 'youtube_shorts':
-                    return '🎬';
-                  case 'facebook':
-                    return '👥';
-                  case 'twitter':
-                    return '🐦';
-                  default:
-                    return '📹';
+                switch (platform.toLowerCase()) {
+                  case 'tiktok': return '🎵';
+                  case 'instagram': return '📷';
+                  case 'youtube_shorts': return '📺';
+                  case 'facebook': return '👥';
+                  case 'twitter': return '🐦';
+                  default: return '🎬';
                 }
               };
 
@@ -617,10 +599,10 @@ const UploadWorkflow = () => {
                 <div key={variant.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
                   <div className={`${getAspectRatioClass(variant.platform)} bg-gray-100 dark:bg-gray-700 relative max-w-sm mx-auto`}>
                     <video
-                      src={`http://localhost:8080${variant.video_url}`}
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${variant.video_url}`}
                       controls
                       className="w-full h-full object-cover rounded-t-lg"
-                      poster={variant.thumbnail_url ? `http://localhost:8080${variant.thumbnail_url}` : undefined}
+                      poster={variant.thumbnail_url ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}${variant.thumbnail_url}` : undefined}
                       preload="metadata"
                       onError={(e) => {
                         console.error('Video load error:', e);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -6,6 +6,7 @@ import { Eye, EyeOff, Sparkles, ArrowRight, Mail, Key } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiEndpoints } from '@/utils/api';
 import Loading from '@/components/ui/Loading';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   if (isRedirecting) {
     return <Loading text="Signing you in..." />;
@@ -37,9 +46,8 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Use the auth context login method
+        login(data.user, data.access_token);
         
         toast.success('Welcome back! 🎉');
         setIsRedirecting(true);

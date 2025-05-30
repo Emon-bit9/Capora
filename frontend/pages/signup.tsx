@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,6 +9,7 @@ import { CheckCircle } from 'lucide-react';
 import { apiEndpoints } from '@/utils/api';
 import Loading from '@/components/ui/Loading';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
+import { useAuth } from '@/context/AuthContext';
 
 const NICHES = [
   { value: '', label: 'Select your niche...', icon: '🎯' },
@@ -31,6 +32,14 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   if (isRedirecting) {
     return <Loading text="Setting up your account..." />;
@@ -77,9 +86,8 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Use the auth context login method
+        login(data.user, data.access_token);
         
         toast.success('Welcome to Capora! 🎉');
         setIsRedirecting(true);

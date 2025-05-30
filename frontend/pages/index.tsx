@@ -42,6 +42,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HomePage() {
   const [demoText, setDemoText] = useState('');
@@ -49,6 +50,7 @@ export default function HomePage() {
   const [demoResult, setDemoResult] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const { user, isAuthenticated } = useAuth();
 
   const testimonials = [
     {
@@ -254,18 +256,37 @@ export default function HomePage() {
                   Reviews
                 </a>
                 <ThemeToggle className="mx-2" />
-                <Link
-                  href="/login"
-                  className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all transform hover:-translate-y-0.5 hover:scale-105"
-                >
-                  Get Started Free
-                </Link>
+                
+                {isAuthenticated && user ? (
+                  // Show user info and dashboard link if authenticated
+                  <div className="flex items-center space-x-4">
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      Hi, {user.name}!
+                    </span>
+                    <Link
+                      href="/dashboard"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all transform hover:-translate-y-0.5 hover:scale-105"
+                    >
+                      Dashboard
+                    </Link>
+                  </div>
+                ) : (
+                  // Show login/signup if not authenticated
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium transition-colors"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:shadow-lg transition-all transform hover:-translate-y-0.5 hover:scale-105"
+                    >
+                      Get Started Free
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Mobile Menu Button */}
@@ -287,13 +308,28 @@ export default function HomePage() {
                   <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium">Features</a>
                   <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium">Pricing</a>
                   <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium">Reviews</a>
-                  <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium">Sign In</Link>
-                  <Link
-                    href="/signup"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold text-center"
-                  >
-                    Get Started Free
-                  </Link>
+                  
+                  {isAuthenticated && user ? (
+                    <>
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">Hi, {user.name}!</span>
+                      <Link
+                        href="/dashboard"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold text-center"
+                      >
+                        Dashboard
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 font-medium">Sign In</Link>
+                      <Link
+                        href="/signup"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold text-center"
+                      >
+                        Get Started Free
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             )}

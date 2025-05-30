@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import '../styles/globals.css';
 import { useEffect } from 'react';
+import { AuthProvider } from '../context/AuthContext';
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <>
+    <AuthProvider>
       <Component {...pageProps} />
       <Toaster 
         position="top-right"
@@ -35,6 +36,6 @@ export default function App({ Component, pageProps }: AppProps) {
         }}
       />
       <VercelAnalytics />
-    </>
+    </AuthProvider>
   );
 } 

@@ -30,6 +30,12 @@ import toast from 'react-hot-toast';
 import { VideoUpload } from '../components/video-upload/VideoUpload';
 import { Settings } from '../components/ui/Settings';
 import { Publishing } from '../components/dashboard/Publishing';
+import { useAuth } from '@/context/AuthContext';
+import Loading from '@/components/ui/Loading';
+import { CaptionGenerator } from '@/components/dashboard/CaptionGenerator';
+import { ContentLibrary } from '@/components/dashboard/ContentLibrary';
+import { Analytics } from '@/components/dashboard/Analytics';
+import { Templates } from '@/components/dashboard/Templates';
 
 interface User {
   id: number;
@@ -105,6 +111,17 @@ interface AnalyticsData {
   }>;
 }
 
+interface Template {
+  id: string;
+  name: string;
+  description: string;
+  template: string;
+  category: string;
+  platforms: string[];
+  tone: string;
+  created_at: string;
+}
+
 const TABS = [
   { id: 'captions', name: 'AI Captions', icon: Sparkles },
   { id: 'videos', name: 'Upload Workflow', icon: Upload },
@@ -116,61 +133,60 @@ const TABS = [
 ];
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout, updateUser, isAuthenticated, isLoading: authLoading } = useAuth();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const [captionRequest, setCaptionRequest] = useState<CaptionRequest>({
+  const [activeTab, setActiveTab] = useState('captions');
+  
+  // Caption Generator State
+  const [captionRequest, setCaptionRequest] = useState({
     video_description: '',
     tone: 'casual',
-    niche: 'lifestyle',
+    platforms: ['instagram'],
     include_hashtags: true,
-    platforms: ['instagram']
+    include_emojis: true,
+    niche: 'lifestyle'
   });
   const [generatedCaption, setGeneratedCaption] = useState<CaptionResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedCaption, setCopiedCaption] = useState(false);
-  const [activeTab, setActiveTab] = useState('captions');
+  
+  // Content Library State
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [isLoadingContent, setIsLoadingContent] = useState(false);
+  
+  // Analytics State
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
-  const [templates, setTemplates] = useState<any[]>([]);
+  
+  // Templates State
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const [templateSearchQuery, setTemplateSearchQuery] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
-  const router = useRouter();
 
   useEffect(() => {
-    // Check authentication
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (!token || !userData) {
+    // Redirect to login if not authenticated
+    if (!authLoading && !isAuthenticated) {
       router.push('/login');
       return;
     }
 
-    try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
+    if (isAuthenticated && user) {
       setCaptionRequest(prev => ({
         ...prev,
-        niche: parsedUser.niche || 'lifestyle'
+        niche: user.niche || 'lifestyle'
       }));
       
       // Fetch initial data
       fetchContentItems();
       fetchAnalytics();
-    } catch (error) {
-      router.push('/login');
-      return;
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
-  }, [router]);
+  }, [authLoading, isAuthenticated, user, router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    logout();
     toast.success('Logged out successfully');
     router.push('/');
   };
@@ -183,12 +199,10 @@ export default function DashboardPage() {
 
     setIsGenerating(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/captions/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(captionRequest),
       });
@@ -236,12 +250,11 @@ export default function DashboardPage() {
   const fetchContentItems = async () => {
     setIsLoadingContent(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/content/`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
@@ -262,12 +275,11 @@ export default function DashboardPage() {
   const fetchAnalytics = async () => {
     setIsLoadingAnalytics(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/analytics/dashboard`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
@@ -288,12 +300,11 @@ export default function DashboardPage() {
   const fetchTemplates = async () => {
     setIsLoadingTemplates(true);
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/templates/`,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
@@ -313,13 +324,12 @@ export default function DashboardPage() {
 
   const useTemplate = async (templateId: number) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/templates/${templateId}/use`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
@@ -350,13 +360,12 @@ export default function DashboardPage() {
 
   const deleteContentItem = async (id: number) => {
     try {
-      const token = localStorage.getItem('token');
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/content/${id}`,
         {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
@@ -384,12 +393,12 @@ export default function DashboardPage() {
     }
   }, [activeTab]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+  if (authLoading || isLoading) {
+    return <Loading text="Loading your dashboard..." />;
+  }
+
+  if (!isAuthenticated || !user) {
+    return null;
   }
 
   return (
@@ -1147,7 +1156,7 @@ export default function DashboardPage() {
                   <Settings 
                     user={user} 
                     onUserUpdate={(updatedUser) => {
-                      setUser(updatedUser);
+                      updateUser(updatedUser);
                       setCaptionRequest(prev => ({
                         ...prev,
                         niche: updatedUser.niche || 'lifestyle'
