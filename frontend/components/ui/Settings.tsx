@@ -77,7 +77,7 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUserUpdate }) => {
     name: user?.name || '',
     email: user?.email || '',
     niche: user?.niche || 'lifestyle',
-    bio: user?.bio || '',
+    bio: '',
   });
 
   const [passwordData, setPasswordData] = useState<PasswordData>({
@@ -92,7 +92,6 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUserUpdate }) => {
         name: user.name || '',
         email: user.email || '',
         niche: user.niche || 'lifestyle',
-        bio: user.bio || '',
       });
     }
   }, [user]);

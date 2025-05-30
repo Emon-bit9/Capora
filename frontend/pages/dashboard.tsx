@@ -1093,7 +1093,7 @@ export default function DashboardPage() {
                                 {template.hashtags && template.hashtags.length > 0 && (
                                   <div className="mb-4">
                                     <div className="flex flex-wrap gap-1">
-                                      {template.hashtags.slice(0, 3).map((hashtag, index) => (
+                                      {template.hashtags.slice(0, 3).map((hashtag: string, index: number) => (
                                         <span
                                           key={index}
                                           className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs"
@@ -1114,7 +1114,7 @@ export default function DashboardPage() {
                                 {template.platforms && template.platforms.length > 0 && (
                                   <div className="mb-4">
                                     <div className="flex flex-wrap gap-1">
-                                      {template.platforms.map((platform, index) => (
+                                      {template.platforms.map((platform: string, index: number) => (
                                         <span
                                           key={index}
                                           className="bg-purple-100 text-purple-800 px-2 py-1 rounded-md text-xs capitalize"
@@ -1141,15 +1141,7 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                {activeTab === 'publishing' && (
-                  <Publishing 
-                    contentId={contentItems.length > 0 ? contentItems[0]?.id?.toString() : undefined}
-                    onPublishSuccess={() => {
-                      fetchContentItems();
-                      fetchAnalytics();
-                    }}
-                  />
-                )}
+                {activeTab === 'publishing' && <Publishing />}
 
                 {activeTab === 'settings' && (
                   <Settings 

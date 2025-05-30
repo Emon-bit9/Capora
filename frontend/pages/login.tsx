@@ -18,7 +18,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   if (isRedirecting) {
-    return <Loading message="Signing you in..." />;
+    return <Loading text="Signing you in..." />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

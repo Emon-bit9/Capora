@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Eye, EyeOff, Sparkles, ArrowRight, User, Mail, Key, Target } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { CheckCircle } from 'lucide-react';
 import { apiEndpoints } from '@/utils/api';
 import Loading from '@/components/ui/Loading';
@@ -33,7 +33,7 @@ export default function SignupPage() {
   const router = useRouter();
 
   if (isRedirecting) {
-    return <Loading message="Setting up your account..." />;
+    return <Loading text="Setting up your account..." />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
