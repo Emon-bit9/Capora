@@ -112,13 +112,18 @@ interface AnalyticsData {
 }
 
 interface Template {
-  id: string;
+  id: number;
   name: string;
   description: string;
   template: string;
   category: string;
   platforms: string[];
   tone: string;
+  niche: string;
+  caption: string;
+  hashtags: string[];
+  is_public: boolean;
+  usage_count: number;
   created_at: string;
 }
 
