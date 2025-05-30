@@ -233,7 +233,7 @@ export default function HomePage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900">
         {/* Development Notice Banner */}
         <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 px-4 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-pattern opacity-10"></div>
+          <div className="absolute inset-0 opacity-10"></div>
           <div className="relative z-10 flex items-center justify-center space-x-2">
             <div className="flex items-center space-x-2">
               <svg className="w-5 h-5 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
