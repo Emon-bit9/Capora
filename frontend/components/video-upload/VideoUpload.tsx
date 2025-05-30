@@ -142,9 +142,6 @@ export function VideoUpload({ onUploadComplete, onError }: VideoUploadProps) {
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/api/v1/videos/process/${uploadData.id}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({
             platforms: selectedPlatforms
           }),
