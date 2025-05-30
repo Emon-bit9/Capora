@@ -26,7 +26,7 @@ Capora is a comprehensive AI-powered SaaS platform that transforms your video co
 - 🔒 **Production-Ready Security** - JWT authentication, rate limiting, SSL support
 - ☁️ **Free Cloud Deployment** - Deploy to Render + Vercel for $0/month
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -232,12 +232,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-##  Support
-
-- 📧 Email: support@capora.app
-- 💬 Discord: [Join our community](https://discord.gg/capora)
-- 📖 Documentation: [docs.capora.app](https://docs.capora.app)
 
 ---
 
