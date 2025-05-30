@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { Toaster } from 'react-hot-toast';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import '../styles/globals.css';
 import { useEffect } from 'react';
 
@@ -33,6 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
           className: 'dark:bg-gray-800 dark:text-white dark:border-gray-700',
         }}
       />
+      <VercelAnalytics />
     </>
   );
 } 

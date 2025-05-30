@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { CaptionGenerator } from './CaptionGenerator';
 import { VideoUpload } from './VideoUpload';
-import { ContentLibrary } from './ContentLibrary';
 import { Analytics } from './Analytics';
 import { Settings as SettingsComponent } from '../ui/Settings';
 import { Templates } from './Templates';
@@ -325,7 +324,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onUserUpdate }) => {
               {activeTab === 'captions' && <CaptionGenerator />}
               {activeTab === 'upload' && <VideoUpload />}
               {activeTab === 'templates' && <Templates />}
-              {activeTab === 'library' && <ContentLibrary />}
+              {activeTab === 'library' && (
+                <div className="p-8 text-center">
+                  <h3 className="text-xl font-semibold text-gray-700 mb-4">Content Library</h3>
+                  <p className="text-gray-500">Coming soon...</p>
+                </div>
+              )}
               {activeTab === 'analytics' && <Analytics />}
               {activeTab === 'settings' && <SettingsComponent user={user} onUserUpdate={onUserUpdate} />}
             </div>

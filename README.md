@@ -115,7 +115,7 @@ For step-by-step instructions with screenshots, see: **[DEPLOYMENT.md](DEPLOYMEN
 - ✅ SSL certificates
 - ✅ Global CDN
 
-**Total Cost: $0/month** 🎉
+**Total Cost: $0/month** 
 
 ## 🛠️ Local Development
 
@@ -225,7 +225,7 @@ Set these in your Render dashboard:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -233,7 +233,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📞 Support
+##  Support
 
 - 📧 Email: support@capora.app
 - 💬 Discord: [Join our community](https://discord.gg/capora)
