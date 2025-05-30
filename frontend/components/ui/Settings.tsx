@@ -8,6 +8,7 @@ interface User {
   email: string;
   niche: string;
   avatar?: string;
+  bio?: string;
   subscription_plan?: string;
   captions_used_this_month?: number;
   videos_processed_this_month?: number;
@@ -92,6 +93,7 @@ export const Settings: React.FC<SettingsProps> = ({ user, onUserUpdate }) => {
         name: user.name || '',
         email: user.email || '',
         niche: user.niche || 'lifestyle',
+        bio: user.bio || '',
       });
     }
   }, [user]);
